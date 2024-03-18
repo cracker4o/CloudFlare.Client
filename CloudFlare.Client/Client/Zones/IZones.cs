@@ -99,6 +99,15 @@ namespace CloudFlare.Client.Client.Zones
         Task<CloudFlareResult<Zone>> PurgeAllFilesAsync(string zoneId, bool purgeEverything, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Remove a list of file URLs form CloudFlare's cache
+        /// </summary>
+        /// <param name="zoneId">Zone identifier</param>
+        /// <param name="files">An array of file URLs to be purged.</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        /// <returns>The purged zone cache result</returns>
+        Task<CloudFlareResult<Zone>> PurgeFilesAsync(string zoneId, string[] files, CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Change key zone property with new value
         /// </summary>
         /// <param name="zoneId">Zone identifier</param>

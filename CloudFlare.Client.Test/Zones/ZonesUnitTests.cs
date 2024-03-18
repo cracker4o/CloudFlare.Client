@@ -145,6 +145,7 @@ namespace CloudFlare.Client.Test.Zones
         }
 
         [Fact]
+
         public async Task TestZoneActivationCheckAsync()
         {
             var zone = ZoneTestData.Zones.First();
@@ -177,6 +178,26 @@ namespace CloudFlare.Client.Test.Zones
             using var client = new CloudFlareClient(WireMockConnection.ApiKeyAuthentication, _connectionInfo);
 
             var purge = await client.Zones.PurgeAllFilesAsync(zone.Id, true);
+
+            purge.Result.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+
+        public async Task TestPurgeFilesAsync()
+        {
+            var zone = ZoneTestData.Zones.First();
+            var filesToPurge = new string[] { $"https://{zone.Name}/test.png" };
+            var expected = new Zone { Id = zone.Id };
+
+            _wireMockServer
+                .Given(Request.Create().WithPath($"/{ZoneEndpoints.Base}/{zone.Id}/{ZoneEndpoints.PurgeCache}").UsingPost())
+                .RespondWith(Response.Create().WithStatusCode(200)
+                    .WithBody(WireMockResponseHelper.CreateTestResponse(expected)));
+
+            using var client = new CloudFlareClient(WireMockConnection.ApiKeyAuthentication, _connectionInfo);
+
+            var purge = await client.Zones.PurgeFilesAsync(zone.Id, filesToPurge);
 
             purge.Result.Should().BeEquivalentTo(expected);
         }
